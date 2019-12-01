@@ -1,0 +1,102 @@
+{
+  "1": {
+    "optimal": "30",
+    "nonoptimal": "0",
+    "critical": "0"
+  },
+  "2": {
+    "optimal": "30",
+    "nonoptimal": "0",
+    "critical": "0"
+  },
+  "3": {
+    "optimal": "22",
+    "nonoptimal": "8",
+    "critical": "0"
+  },
+  "4": {
+    "optimal": "17",
+    "nonoptimal": "6",
+    "critical": "6"
+  },
+  "5": {
+    "optimal": "13",
+    "nonoptimal": "5",
+    "critical": "5"
+  },
+  "6": {
+    "optimal": "11",
+    "nonoptimal": "4",
+    "critical": "4"
+  },
+  "7": {
+    "optimal": "9",
+    "nonoptimal": "3",
+    "critical": "4"
+  },
+  "8": {
+    "optimal": "8",
+    "nonoptimal": "3",
+    "critical": "3"
+  },
+  "9": {
+    "optimal": "7",
+    "nonoptimal": "2",
+    "critical": "3"
+  },
+  "10": {
+    "optimal": "6",
+    "nonoptimal": "2",
+    "critical": "3"
+  },
+  "11": {
+    "optimal": "5",
+    "nonoptimal": "3",
+    "critical": "2"
+  },
+  "12": {
+    "optimal": "5",
+    "nonoptimal": "2",
+    "critical": "2"
+  },
+  "13": {
+    "optimal": "4",
+    "nonoptimal": "2",
+    "critical": "2"
+  },
+  "14": {
+    "optimal": "4",
+    "nonoptimal": "2",
+    "critical": "2"
+  },
+  "15": {
+    "optimal": "4",
+    "nonoptimal": "1",
+    "critical": "2"
+  },
+  "16": {
+    "optimal": "3",
+    "nonoptimal": "2",
+    "critical": "1"
+  },
+  "17": {
+    "optimal": "3",
+    "nonoptimal": "2",
+    "critical": "1"
+  },
+  "18": {
+    "optimal": "3",
+    "nonoptimal": "1",
+    "critical": "2"
+  },
+  "19": {
+    "optimal": "3",
+    "nonoptimal": "1",
+    "critical": "1"
+  },
+  "20": {
+    "optimal": "3",
+    "nonoptimal": "1",
+    "critical": "1"
+  }
+}

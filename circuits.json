@@ -1,0 +1,177 @@
+{
+  "australia": {
+    "suspension": "Neutral",
+    "rideHeight": 19,
+    "wingLevel": 10,
+    "pit": 17,
+    "weather": "https://darksky.net/forecast/-37.8464,144.9712/si12/en"
+  },
+  "malaysia": {
+    "suspension": "Neutral",
+    "rideHeight": 12,
+    "wingLevel": 5,
+    "pit": 21,
+    "weather": "https://darksky.net/forecast/2.7606,101.7375/ca12/it"
+  },
+  "china": {
+    "suspension": "Neutral",
+    "rideHeight": 5,
+    "wingLevel": 8,
+    "pit": 18,
+    "weather": "https://darksky.net/forecast/31.3389,121.2197/si12/en"
+  },
+  "bahrain": {
+    "suspension": "Firm",
+    "rideHeight": 8,
+    "wingLevel": 3,
+    "pit": 18,
+    "weather": "https://darksky.net/forecast/26.0325,50.5106/si12/en"
+  },
+  "azerbaijan": {
+    "suspension": "Neutral",
+    "rideHeight": 17,
+    "wingLevel":5,
+    "pit": 23,
+    "weather": "https://darksky.net/forecast/40.3777,49.892/ca12/en"
+  },
+  "spain": {
+    "suspension": "Soft",
+    "rideHeight": 5,
+    "wingLevel": 13,
+    "pit": 17,
+    "weather": "https://darksky.net/forecast/41.57,2.2611/si12/en"
+  },
+  "monaco": {
+    "suspension": "Soft",
+    "rideHeight": 22,
+    "wingLevel": 20,
+    "pit": 16,
+    "weather": "https://darksky.net/forecast/43.7347,7.4206/si12/en"
+  },
+  "canada": {
+    "suspension": "Firm",
+    "rideHeight": 9,
+    "wingLevel": 1,
+    "pit": 17,
+    "weather": "https://darksky.net/forecast/45.5034,-73.5291/us12/en"
+  },
+  "france": {
+    "suspension": "Neutral",
+    "rideHeight": 17,
+    "wingLevel": 8,
+    "pit": 22,
+    "weather": "https://darksky.net/forecast/43.2489,5.8037/us12/en"
+  },
+  "austria": {
+    "suspension": "Firm",
+    "rideHeight": 9,
+    "wingLevel": 3,
+    "pit": 20,
+    "weather": "https://darksky.net/forecast/47.2235,14.7642/ca12/en"
+  },
+  "belgium": {
+    "suspension": "Neutral",
+    "rideHeight": 12,
+    "wingLevel": 9,
+    "pit": 16,
+    "weather": "https://darksky.net/forecast/50.4372,5.9714/si12/en"
+  },
+  "gb19": {
+    "suspension": "Firm",
+    "rideHeight": 9,
+    "wingLevel": 3,
+    "pit": 22,
+    "weather": "https://darksky.net/forecast/52.0786,-1.0169/si12/en"
+  },
+  "germany": {
+    "suspension": "Neutral",
+    "rideHeight": 8,
+    "wingLevel": 8,
+    "pit": 22,
+    "weather": "https://darksky.net/forecast/50.3356,6.9475/si12/en"
+  },
+  "hungary": {
+    "suspension": "Soft",
+    "rideHeight": 10,
+    "wingLevel": 15,
+    "pit": 19,
+    "weather": "https://darksky.net/forecast/47.5822,19.2511/si12/en"
+  },
+  "italy": {
+    "suspension": "Firm",
+    "rideHeight": 12,
+    "wingLevel": 1,
+    "pit": 18,
+    "weather": "https://darksky.net/forecast/45.6206,9.2894/si12/en"
+  },
+  "singapore": {
+    "suspension": "Soft",
+    "rideHeight": 17,
+    "wingLevel": 16,
+    "pit": 17,
+    "weather": "https://darksky.net/forecast/1.2915,103.8639/si12/en"
+  },
+  "russia": {
+    "suspension": "Neutral",
+    "rideHeight": 4,
+    "wingLevel": 8,
+    "pit": 20,
+    "weather": "https://darksky.net/forecast/43.5943,39.7252/us12/en"
+  },
+  "japan": {
+    "suspension": "Soft",
+    "rideHeight": 12,
+    "wingLevel": 13,
+    "pit": 19,
+    "weather": "https://darksky.net/forecast/34.8431,136.5406/si12/en"
+  },
+  "brazil": {
+    "suspension": "Neutral",
+    "rideHeight": 8,
+    "wingLevel": 8,
+    "pit": 19,
+    "weather": "https://darksky.net/forecast/-23.7011,-46.6972/si12/en"
+  },
+  "abudhabi": {
+    "suspension": "Neutral",
+    "rideHeight": 13,
+    "wingLevel": 5,
+    "pit": 18,
+    "weather": "https://darksky.net/forecast/24.4672,54.6031/si12/en"
+  },
+  "mexico": {
+    "suspension": "Neutral",
+    "rideHeight": 7,
+    "wingLevel": 8,
+    "pit": 20,
+    "weather": "https://darksky.net/forecast/19.3986,-99.0863/ca12/en"
+  },
+  "usa": {
+    "suspension": "Neutral",
+    "rideHeight": 4,
+    "wingLevel": 6,
+    "pit": 19,
+    "weather": "https://darksky.net/forecast/30.1462,-97.6236/ca12/en"
+  },
+  "turkey": {
+    "suspension": "Neutral",
+    "rideHeight": 13,
+    "wingLevel": 8,
+    "pit": 22,
+    "weather": "https://darksky.net/forecast/40.9517,29.405/si12/en"
+  },
+  "gb09": {
+    "suspension": "Firm",
+    "rideHeight": 12,
+    "wingLevel": 3,
+    "pit": 17,
+    "weather": "https://darksky.net/forecast/52.0786,-1.0169/si12/en"
+  },
+  "europe": {
+    "suspension": "Soft",
+    "rideHeight": 12,
+    "wingLevel": 13,
+    "pit": 13,
+    "weather": "https://darksky.net/forecast/39.4588,-0.3256/si12/en"
+  }
+}

@@ -26,7 +26,8 @@ def telegram_webhook():
         chat_id = update["message"]["chat"]["id"]
         if "text" in update["message"]:
             text = update["message"]["text"]
-            parse(chat_id, text)
+            parse(chat_id, text, update)
+            #bot.sendMessage(admin.admin_id,"{}".format(update))
     return "OK"
 
 ######################################################
@@ -84,7 +85,7 @@ def deleteCookie(chat_id):
 # COMMAND
 ######################################################
 
-def parse(chat_id, msg):
+def parse(chat_id, msg, request):
     token = msg.split(" ")
 
     for t in token:
@@ -104,57 +105,65 @@ def parse(chat_id, msg):
 
     setCookie(chat_id, token)
 
-    if(cmd == "/circuits"):
-        res = circuits(chat_id,token)
+    res = True
+    status = False
+
+    if(cmd == "/circuits" or cmd == "/circuit"):
+        res,status = circuits(chat_id,token)
     elif(cmd == "/list"):
-        res = list(chat_id)
+        res,status = list(chat_id)
     elif(cmd == "/pilots"):
-        res = pilots(chat_id, token)
+        res,status = pilots(chat_id, token)
     elif(cmd == "/pilot"):
-        res = pilot(chat_id, token)
+        res,status = pilot(chat_id, token)
     elif(cmd == "/newpilot"):
-        res = newPilot(chat_id, token)
+        res,status = newPilot(chat_id, token)
     elif(cmd == "/modify"):
-        res = modify(chat_id,token)
+        res,status = modify(chat_id,token)
     elif(cmd == "/delete"):
-        res = delete(chat_id,token)
+        res,status = delete(chat_id,token)
     elif(cmd == "/setup"):
-        res = setup(chat_id,token)
+        res,status = setup(chat_id,token)
     elif(cmd == "/info"):
-        res = info(chat_id)
+        res,status = info(chat_id)
     elif(cmd == "/tyres"):
-        res = tyres(chat_id,token)
+        res,status = tyres(chat_id,token)
     elif(cmd == "/strategy"):
-        res = strategy(chat_id,token)
+        res,status = strategy(chat_id,token)
     elif(cmd == "/help"):
-        res = help(chat_id)
+        res,status = help(chat_id)
     elif(cmd == "/start"):
-        res = start(chat_id)
+        res,status = start(chat_id)
+    elif(cmd == "/comment"):
+        res,status = comment(chat_id, token)
     #--- ADMIN ---
-    elif(cmd == "adminallpilots"):
-        res = allPilots(chat_id)
-    elif(cmd == "admintest"):
-        res = test(chat_id, token)
-    elif(cmd == "adminviewcookies"):
-        res = viewCookies(chat_id)
+    elif(cmd == "/adminpanel" or cmd == "/admin"):
+        res,status = adminPanel(chat_id)
+    elif(cmd == "/adminpilots"):
+        res,status = adminPilots(chat_id,token)
+    elif(cmd == "/admintest"):
+        res,status = adminTest(chat_id, token)
+    elif(cmd == "/admincookies"):
+        res,status = viewCookies(chat_id)
     else:
-        res = noCmd(chat_id)
+        res,status = noCmd(chat_id)
 
     if res:
         deleteCookie(chat_id)
+        report(chat_id, token, request, cmd, status)
 
 def newPilot(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "Add a pilot in your team\n\nParams:\n- pilot's surname\n- pilot's height\n- pilot's wing delta (optionally)\n\nExample: /newpilot Hamilton 174")
+        bot.sendMessage(chat_id, "Add a pilot in your team\n\nParams:\n- pilot's surname\n- pilot's height\n- pilot's wing delta\n\nExample: /newpilot Hamilton 174 -2")
         bot.sendMessage(chat_id, "What's your pilot's surname?")
-        return False
+        return False,False
     elif(len(token)==2):
         bot.sendMessage(chat_id, "How tall is {}?".format(token[1].capitalize()))
-        return False
+        return False,False
     elif(len(token)==3):
-        bot.sendMessage(chat_id, "Set {} wing's ability : the delta between your pilot setup and the standard setup\nUse /circuits to see the standard setup\nif you don't know write 0 and you could use /modify after".format(token[1]))
-        return False
+        bot.sendMessage(chat_id, "Set {} wing's ability : the delta between your pilot setup and the standard setup\nif you don't know write 0 and you could use /modify after".format(token[1]))
+        return False,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'pilots.json')
@@ -166,34 +175,35 @@ def newPilot(chat_id, token):
 
     if(key in data):
         bot.sendMessage(chat_id, "Pilot already registered\nView details with /pilot or the list with /pilots")
-        return True
+        return True,False
 
     wing = token[3]
 
     try:
         data.update({key:{'height':int(token[2]), 'wing':int(wing)}})
     except ValueError:
-         bot.sendMessage(chat_id, "Error in params:\nHeight and Wing's ability must be numbers")
-         return True
+         bot.sendMessage(chat_id, "Error\nHeight and Wing's ability must be numbers")
+         return True,False
 
     with open(json_file_path, 'w') as f:
         json.dump(data, f)
 
     bot.sendMessage(chat_id, "Pilot registered")
-    return True
+    return True,True
 
 def modify(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "Modify pilot's profile\n\nParams:\n- pilot's surname\n- pilot's height\n- pilot's wing delta (optionally)\n\nExample: /newpilot Hamilton 175")
+        bot.sendMessage(chat_id, "Modify pilot's profile\n\nParams:\n- pilot's surname\n- pilot's height\n- pilot's wing delta\n\nExample: /newpilot Hamilton 175 -1")
         bot.sendMessage(chat_id, "Which pilote do you want to modify?")
-        return False
+        pilots(chat_id,token)
+        return False,False
     elif(len(token)==2):
         bot.sendMessage(chat_id, "How tall is {}?".format(token[1].capitalize()))
-        return False
+        return False,False
     elif(len(token)==3):
-        bot.sendMessage(chat_id, "Set {} wing's ability : the delta between your pilot setup and the standard setup\nUse /circuits to see the standard setup\nif you don't know write 0 and you could use /modify after".format(token[1]))
-        return False
+        bot.sendMessage(chat_id, "Set {} wing's ability : the delta between your pilot setup and the standard setup\nUse /circuit to see the standard setup\nif you don't know write 0 and you could use /modify after".format(token[1]))
+        return False,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'pilots.json')
@@ -208,22 +218,22 @@ def modify(chat_id, token):
         try:
             data.update({key:{'height':int(token[2]), 'wing':int(wing)}})
         except ValueError:
-            bot.sendMessage(chat_id, "Error in params:\nHeight and Wing's ability must be numbers")
-            return True
+            bot.sendMessage(chat_id, "Error:\nHeight and Wing's ability must be numbers")
+            return True,False
     else:
         bot.sendMessage(chat_id, "Pilot not registered\nView the list with /pilots")
-        return True
+        return True,False
 
     with open(json_file_path, 'w') as f:
         json.dump(data, f)
 
     bot.sendMessage(chat_id, "Pilot's profile changed")
-    return True
+    return True,True
 
 
 def pilots(chat_id, token):
 
-    msg = "Pilots\n\n"
+    msg = "Your Pilots\n\n"
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'pilots.json')
 
@@ -239,16 +249,18 @@ def pilots(chat_id, token):
     if(cnt > 0):
         bot.sendMessage(chat_id, msg)
     else:
-        bot.sendMessage(chat_id,"Insert a pilot with /newpilot");
+        bot.sendMessage(chat_id,"Insert a pilot with /newpilot")
+        return True,False
 
-    return True
+    return True,True
 
 def pilot(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "View a pilot's profile\n\nParams:\n- pilot's surname (use /pilots)\n\nExample: /pilot Verstappen")
+        bot.sendMessage(chat_id, "View a pilot's profile\n\nParams:\n- pilot's surname\n\nExample: /pilot Verstappen")
         bot.sendMessage(chat_id, "Which pilot do you want to check?")
-        return False
+        pilots(chat_id,token)
+        return False,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'pilots.json')
@@ -263,15 +275,17 @@ def pilot(chat_id, token):
         bot.sendMessage(chat_id, "Pilot {}\n\nHeight: {}\nWing delta: {}".format(token[1].lower().capitalize(),value["height"],value["wing"]))
     else:
         bot.sendMessage(chat_id,"Pilot not registered: insert a pilot with /newpilot")
+        return True,False
 
-    return True
+    return True,True
 
 def delete(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "Delete a pilot's profile from your team\n\nParams:\n- pilot's surname (use /pilots)\n\nExample: /delete Massa")
+        bot.sendMessage(chat_id, "Delete a pilot's profile from your team\n\nParams:\n- pilot's surname\n\nExample: /delete Massa")
         bot.sendMessage(chat_id, "Which pilot's profile do you want to delete?")
-        return False
+        pilots(chat_id,token)
+        return False,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'pilots.json')
@@ -285,26 +299,26 @@ def delete(chat_id, token):
         del data[key]
     else:
         bot.sendMessage(chat_id, "Pilot not registered\nView the list with /pilots")
-        return True
+        return True,False
 
     with open(json_file_path, 'w') as f:
             json.dump(data, f)
 
     bot.sendMessage(chat_id,"Pilot's profile deleted")
-    return True
+    return True,True
 
 def setup(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "Calculate setup for a pilot and a track\n\nParams:\n- pilot's surname\n- track's name (use /list)\n- water level (optionally)\n\nExample: /setup Vettel Italy")
+        bot.sendMessage(chat_id, "Calculate setup for a pilot and a track\n\nParams:\n- pilot's surname\n- track's name (use /list)\n- water level\n\nExample: /setup Vettel Italy 0")
         bot.sendMessage(chat_id, "Which driver do you want to calculate the setup for?\n")
-        return False
+        return False,False
     elif(len(token)==2):
         bot.sendMessage(chat_id, "Which track do you want to calculate the setup for?")
-        return False
+        return False,False
     elif(len(token)==3):
         bot.sendMessage(chat_id, "What's the water level?\nWrite 0 if there is no water")
-        return False
+        return False,False
 
     mm = 0
     delta = 0
@@ -317,12 +331,12 @@ def setup(chat_id, token):
         mm = float(token[3])
         wetText = "with {}mm".format(mm)
     except ValueError:
-        bot.sendMessage(chat_id, "Error in param\nWater level must be a number")
-        return True
+        bot.sendMessage(chat_id, "Error \nWater level must be a number")
+        return True,False
 
     if mm < 0:
-        bot.sendMessage(chat_id, "Error in param\nWater level must be a positive number")
-        return True
+        bot.sendMessage(chat_id, "Error \nWater level must be a positive number")
+        return True,False
     elif mm >= 0.3 and mm <=3.2:
         delta = 12
     elif mm >3.2:
@@ -343,7 +357,7 @@ def setup(chat_id, token):
         value = data[key]
     else:
         bot.sendMessage(chat_id,"Pilot not registered\nInsert a pilot with /newpilot or view your pilots with /pilots");
-        return True
+        return True,False
 
     pilotHeight = int(value["height"])
 
@@ -361,7 +375,7 @@ def setup(chat_id, token):
         height = 1
     else:
         bot.sendMessage(chat_id,"Pilot's height out of scale")
-        return True
+        return True,False
 
     if(track in file):
         info = file[track]
@@ -370,7 +384,7 @@ def setup(chat_id, token):
         msg = "This circuit does not exist in the database use /list to check which ones are present"
 
     bot.sendMessage(chat_id, msg)
-    return True
+    return True,False
 
 def list(chat_id):
 
@@ -383,21 +397,23 @@ def list(chat_id):
     for k in file.keys():
         msg += k.capitalize()+"\n"
 
+    msg+="\nUse /circuit for view the details of a track"
+
     bot.sendMessage(chat_id, msg, parse_mode='Markdown')
-    return True
+    return True,True
 
 
 def circuits(chat_id, token):
 
     if(len(token)==1):
-        bot.sendMessage(chat_id, "View circuit's setup and pit time:\n\nParams:\n- track's name\n- water level (optionally)\n\nExample: /circuits Monaco")
+        bot.sendMessage(chat_id, "View circuit's setup and pit time:\n\nParams:\n- track's name\n- water level\n\nExample: /circuit Monaco 0.3")
         bot.sendMessage(chat_id, "Which track do you want to calculate the setup for?")
-        return False
+        return False,False
     elif(len(token)==2):
         bot.sendMessage(chat_id, "What's the water level?\nWrite 0 if there is no water")
-        return False
+        return False,False
 
-    track = "ls"
+    track = ""
     mm = 0
     delta = 0
     wetText = ""
@@ -407,12 +423,12 @@ def circuits(chat_id, token):
         mm = float(token[2])
         wetText = "with {}mm".format(mm)
     except ValueError:
-        bot.sendMessage(chat_id, "Error in param\nWater level must be a number")
-        return True
+        bot.sendMessage(chat_id, "Error \nWater level must be a number")
+        return True,False
 
     if mm < 0:
-        bot.sendMessage(chat_id, "Error in param\nWater level must be a positive number")
-        return True
+        bot.sendMessage(chat_id, "Error \nWater level must be a positive number")
+        return True,False
     elif mm >= 0.3 and mm <=3.2:
         delta = 12
     elif mm >3.2:
@@ -430,16 +446,17 @@ def circuits(chat_id, token):
         msg = "{} {}\n\nSuspension: {}\nRide height: {}\nWing level: {}\nPit time: {}s\nWeather: [Dark Sky]({}) ".format(token[1].lower().capitalize(),wetText, info["suspension"],info["rideHeight"]+delta,info["wingLevel"]+delta,info["pit"],info["weather"])
     else:
         msg = "This circuit does not exist in the database use /list to check which ones are present"
+        return True,False
 
     bot.sendMessage(chat_id, msg, parse_mode='Markdown')
-    return True
+    return True,True
 
 def tyres(chat_id, token):
 
     if(len(token) == 1):
         bot.sendMessage(chat_id, "View tyres performance\n\nParam:\n- tyres % consumption (between 1 to 20)\n\nExample /tyres 8")
         bot.sendMessage(chat_id, "Which tyres consumption do you want to examine?")
-        return False
+        return False,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'tyres.json')
@@ -450,43 +467,43 @@ def tyres(chat_id, token):
     if(token[1] in data):
         value = data[token[1]]
         bot.sendMessage(chat_id, "Tyres performance with {}%\n\nOptimal: max {} lap\nNon Optimal: max {} lap\nCritical: max {} lap".format(token[1],int(value["optimal"]),int(value["nonoptimal"])+int(value["optimal"]),int(value["critical"])+int(value["nonoptimal"])+int(value["optimal"])))
-        return True
+        return True,True
 
-    bot.sendMessage(chat_id,"Error in param\nThe %: must be between 1 to 20")
-    return True
+    bot.sendMessage(chat_id,"Error \nThe %: must be between 1 to 20")
+    return True,False
 
 def strategy(chat_id, token):
 
     if(len(token) == 1):
-        bot.sendMessage(chat_id, "Calculate possible strategies\n\nParam:\n- number of lap\n- super soft % consumption\n- soft % consumption\n- medium % consumption\n- hard % consumption\n- fuel consumption per lap (optionally)\n\nAll tyre consumption must be between 1 to 20\n\nExample: /strategy 42 16 7 4 3 2.9")
+        bot.sendMessage(chat_id, "Calculate possible strategies\n\nParam:\n- number of lap\n- super soft % consumption\n- soft % consumption\n- medium % consumption\n- hard % consumption\n- fuel consumption per lap\n\nAll tyre consumption must be between 1 to 20\n\nExample: /strategy 42 16 7 4 3 2.97")
         bot.sendMessage(chat_id, "How many laps do you want to consider?")
-        return False
+        return False,False
     elif(len(token) == 2):
         bot.sendMessage(chat_id, "What is the consumption of Super Soft tires?")
-        return False
+        return False,False
     elif(len(token) == 3):
         bot.sendMessage(chat_id, "What is the consumption of Soft tires?")
-        return False
+        return False,False
     elif(len(token) == 4):
         bot.sendMessage(chat_id, "What is the consumption of Medium tires?")
-        return False
+        return False,False
     elif(len(token) == 5):
         bot.sendMessage(chat_id, "What is the consumption of Hard tires?")
-        return False
+        return False,False
     elif(len(token) == 6):
         bot.sendMessage(chat_id, "What is the fuel consumption per lap?\nIf you are not interested, type 1")
-        return False
+        return False,False
 
     n=0
     try:
         n = int(token[1])
     except ValueError:
         bot.sendMessage(chat_id,"First param must be a positive number: the number of laps")
-        return True
+        return True,False
 
     if n <= 0:
         bot.sendMessage(chat_id,"First param must be a positive number: the number of laps")
-        return True
+        return True,False
 
 
     fuel = 0
@@ -494,11 +511,11 @@ def strategy(chat_id, token):
         fuel = float(token[6])
     except ValueError:
         bot.sendMessage(chat_id,"Fuel consumption must be a number")
-        return True
+        return True,False
 
     if fuel <= 0:
         bot.sendMessage(chat_id,"Fuel consumption must be a positive number")
-        return True
+        return True,False
 
     maxFuelLap = int(50/fuel)
 
@@ -522,7 +539,7 @@ def strategy(chat_id, token):
             maxLap[index] = min(int(data[token[index+2]]["optimal"])+int(data[token[index+2]]["nonoptimal"]),maxFuelLap)
         else:
             bot.sendMessage(chat_id,"The tyres consumption must be between 1 to 20")
-            return True
+            return True,False
 
     lap = 0
     tyreType = [0,0,0,0]
@@ -584,7 +601,7 @@ def strategy(chat_id, token):
     msg+="\nAll the strategies are not ordered: you can choose the order in which to use the tyres!"
 
     bot.sendMessage(chat_id,msg)
-    return True
+    return True,True
 
 
 ######################################################
@@ -593,48 +610,80 @@ def strategy(chat_id, token):
 
 
 def info(chat_id):
-    bot.sendMessage(chat_id, "Version: 3\nDeveloped by Giuseppe Bisicchia\nGithub: github.com/GBisi")
-    return True
+    bot.sendMessage(chat_id, "Version: 4\nDeveloped by Giuseppe Bisicchia\nGithub: github.com/GBisi\n\nThanks to [Bruno Brown](https://igpmanager.com/app/d=profile&user=1049971&tab=bio) for his [guide](https://igpmanager.com/forum-thread/21909)!",  parse_mode='Markdown')
+    return True,True
 
 def help(chat_id):
     msg = "List of commands\n\n\
-* newpilot - Add a pilot in your team\n\
-* modify - Modify pilot's profile\n\
-* delete - Delete a pilot's profile from your team\n\
-* pilots - View your team\n\
-* pilot - View a pilot's profile\n\
-* setup - Calculate setup for a pilot and a track\n\
-* list - View supported tracks\n\
-* circuits - View circuit's setup and pit time\n\
-* tyres - View tyres performance\n\
-* strategy - Calculate possible strategies\n\
-* info - Some info\n\
-* cancel - Restart the session or in case of problems\n\
-* help - /help\n\n\
-In case of problems type /cancel\
+/newpilot - Add a pilot in your team\n\
+/setup - Calculate setup for a pilot and a track\n\
+/strategy - Calculate possible strategies\n\
+/circuit - View circuit's setup and pit time\n\
+/pilots - View your team\n\
+/pilot - View a pilot's profile\n\
+/list - View supported tracks\n\
+/tyres - View tyres performance\n\
+/modify - Modify pilot's profile\n\
+/delete - Delete a pilot's profile from your team\n\
+/cancel - Restart the session or in case of problems\n\
+/comment - Leave a comment or report a problem\n\
+/info - Some info\n\
+/help - /help\n\n\
+In case of problems type /cancel. You can report the problem or leave a comment with /comment\
     "
 
     bot.sendMessage(chat_id,msg)
-    return True
+    return True,True
 
 def start(chat_id):
-    bot.sendMessage(chat_id,"Unofficial iGP Manager Bot\n\n* Manage your team\n* Quick setup for all circuits\n* Calculate possible strategies and tyres performance\n* Get the perfect setup for your pilots on every track")
+    bot.sendMessage(chat_id,"Unofficial iGP Manager Bot\n\n* Manage your team\n* Quick setup for all circuits\n* Calculate possible strategies and tyres performance\n* Get the perfect setup for your pilots on every track\n\nDeveloped by Giuseppe Bisicchia")
     help(chat_id)
     #info(chat_id)
-    return True
+    return True,True
 
 def noCmd(chat_id):
     bot.sendMessage(chat_id,"Command not recognized")
-    return True
+    help(chat_id)
+    return True,True
+
+def comment(chat_id, token):
+    if(len(token) == 1):
+        bot.sendMessage(chat_id,"Did you have a problem or want to leave some suggestions or comments?\nThis space is for you: write everything you want us to know!")
+        bot.sendMessage(chat_id,"Leave a comment here.\nIf you want to report a problem start with \"Problem:\", please")
+        return False,False
+
+    bot.sendMessage(chat_id,"Thank you!")
+    return True,True
+
+
+def report(chat_id, token, request, operation, status):
+    if(not admin.checkAdmin(chat_id)):
+        if status:
+            msgStatus = "SUCCESS"
+        else:
+            msgStatus = "FAILED"
+        bot.sendMessage(admin.admin_id, "--- REPORT ---\n\n\
+OPERATION: {}\n\
+STATUS: {}\n\
+TOKEN: {}\n\
+USER: {}\n\n\
+\
+{}".format(operation, msgStatus, token, chat_id, request))
+
+    return True,True
 
 ######################################################
 # ADMIN
 ######################################################
 
-def allPilots(chat_id):
+def adminPilots(chat_id, token):
     if(not admin.checkAdmin(chat_id)):
-        noCmd()
-        return True
+        noCmd(chat_id)
+        return True,False
+        
+    if(len(token) == 1):
+        bot.sendMessage(chat_id, "Do you want to see the database? Y/N")
+        return False, False
 
     msg = "All Pilots\n\n"
     my_dir = os.path.dirname(__file__)
@@ -647,19 +696,21 @@ def allPilots(chat_id):
     for k in data.keys():
         tok = k.split(separator)
         cnt+=1
-        msg += tok[1].capitalize()+"\n"
+        msg += "{} -> {}\n".format(tok[1].capitalize(),tok[0])
     if(cnt > 0):
+        msg+="\nTotal: {}".format(cnt)
         bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, data)
+        if(token[1].lower() == "y" or token[1].lower() == "yes"):
+            bot.sendMessage(chat_id, data)
     else:
         bot.sendMessage(chat_id,"No pilots in the database!")
 
-    return True
+    return True,True
 
 def viewCookies(chat_id):
     if(not admin.checkAdmin(chat_id)):
-        noCmd()
-        return True
+        noCmd(chat_id)
+        return True,False
 
     my_dir = os.path.dirname(__file__)
     json_file_path = os.path.join(my_dir, 'cookie.json')
@@ -669,18 +720,26 @@ def viewCookies(chat_id):
 
     bot.sendMessage(chat_id, data)
 
-    return True
+    return True,True
 
 
-def test(chat_id, token):
-
+def adminTest(chat_id, token):
     if(not admin.checkAdmin(chat_id)):
-        noCmd()
-        return True
+        noCmd(chat_id)
+        return True,False
 
     bot.sendMessage(chat_id, "helo")
 
-    return True
+    return True,True
+    
+def adminPanel(chat_id):
+    if(not admin.checkAdmin(chat_id)):
+        noCmd(chat_id)
+        return True,False
+
+    bot.sendMessage(chat_id, "***** ADMIN PANEL *****\n\n-> /adminpilots\n-> /admincookies\n-> /admintest")
+
+    return True,True    
 
 
 

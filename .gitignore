@@ -103,7 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#MY
+#My files
 admin.py
+backup.py
 pilots.json
 cookie.json
